@@ -51,7 +51,7 @@ def main() -> None:
 
                 # in case we got rate limited - try to sleep for the required duration
                 if response.status_code == TOO_MANY_REQUESTS:
-                    time.sleep(response.json().get("retry_after", DELAY))
+                    time.sleep(float(response.json().get("retry_after", DELAY)))
 
             # delay next batch in order to stay within the rate limit
             if float(response.headers["X-RateLimit-Remaining"]) <= 1:
