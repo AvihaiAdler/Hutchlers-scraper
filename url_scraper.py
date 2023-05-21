@@ -3,7 +3,6 @@ import sys
 import requests
 import time
 
-# POST_URL: str = "https://discord.com/api/webhooks/1094226591351066794/v9Imkmx2TunkxBLKAaDGaCn5WXFlr76ra7oNq72VeTuqpUP7-aeHlgSJg4HawP7ryZwY"
 CHARACTER_LIMIT: int = 2000
 MESSAGE_LIMIT: int = 10
 
