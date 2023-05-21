@@ -5,6 +5,7 @@ import time
 
 CHARACTER_LIMIT: int = 2000
 MESSAGE_LIMIT: int = 10
+DELAY: float = 0.5
 
 
 def extract_attacments_urls(html_doc: str, parser_type: str) -> set[str] | None:
@@ -26,33 +27,6 @@ def extract_attacments_urls(html_doc: str, parser_type: str) -> set[str] | None:
         )
 
 
-def construct_content(url_list: set[str], char_limit: int) -> dict[int, str]:
-    """contruct message content from a list of urls.
-    each message must be below 2000 chars to satisfy Discord's limit
-
-    Args:
-        url_list (set[str]): a set containing all urls
-        char_limit (int): the character limit per message. 2000 as per the Discord API
-
-    Returns:
-        dict[int, str]: a dictionary with a message number as a key
-        and the message itself as the value
-    """
-    ret: dict[int, str] = {}
-
-    index: int = 0
-    current_len: int = 0
-    for url in url_list:
-        tmp_len = len(url)
-        if current_len + 1 + tmp_len < char_limit:
-            ret[index] = ret.get(index, url) + " " + url
-            current_len += tmp_len
-        else:
-            index += 1
-            current_len = 0
-    return ret
-
-
 def main() -> None:
     # cmd arguments
     if len(sys.argv) < 3:
@@ -68,18 +42,16 @@ def main() -> None:
         if urls is None:
             continue
 
-        content: dict[int, str] = construct_content(urls, CHARACTER_LIMIT)
-        for key, message_content in content.items():
+        for idx, url in enumerate(urls):
             response: requests.Response = requests.post(
-                post_url,
-                data={"username": "scrapper-webhook", "content": message_content},
+                post_url, json={"username": "scraper-webhook", "content": url}
             )
 
             if 200 > response.status_code >= 300:
                 print(f"Error: {response.status_code}: {response.reason}")
 
-            # delay further messages to stay below Discord's (estimated) rate limit
-            if key and key % MESSAGE_LIMIT == 0:
+            # delay next batch in order to stay within the rate limit
+            if idx and idx % MESSAGE_LIMIT == 0:
                 time.sleep(0.5)
 
 
