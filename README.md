@@ -11,7 +11,7 @@ all following arguments are paths to a local html document one wants to scrape.
 an example might look like: `python url_scraper.py https://discord.com/api/webhooks/secret path/to/html/document_1.html path/to/html/document_2.html`
 
 ### Setting up
-- make sure you have python 3.8 installed
+- make sure you have python 3.8 (or above) installed. this is important as otherwise the script can't guarantee chronological order of links
 - clone the repo
 - navigate to the project directory, open a terminal and run `python3 -m venv .venv`. this will create a virtual environment in the current directory (which may take a few seconds)
 - run `source .venv/bin/activate` to activate the virtual environment (`.venv\Scripts\activate.bat`). [`deactivate` in case you want to deactivate it]
