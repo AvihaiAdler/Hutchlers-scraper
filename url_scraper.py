@@ -3,9 +3,8 @@ import sys
 import requests
 import time
 
-CHARACTER_LIMIT: int = 2000
-MESSAGE_LIMIT: int = 10
-DELAY: float = 0.5
+DELAY: float = 1
+TOO_MANY_REQUESTS: int = 429
 
 
 def extract_attacments_urls(html_doc: str, parser_type: str) -> set[str] | None:
@@ -42,17 +41,21 @@ def main() -> None:
         if urls is None:
             continue
 
-        for idx, url in enumerate(urls):
+        for url in urls:
             response: requests.Response = requests.post(
                 post_url, json={"username": "scraper-webhook", "content": url}
             )
 
-            if 200 > response.status_code >= 300:
+            if not response.ok:
                 print(f"Error: {response.status_code}: {response.reason}")
 
+                # in case we got rate limited - try to sleep for the required duration
+                if response.status_code == TOO_MANY_REQUESTS:
+                    time.sleep(response.json().get("retry_after", DELAY))
+
             # delay next batch in order to stay within the rate limit
-            if idx and idx % MESSAGE_LIMIT == 0:
-                time.sleep(0.5)
+            if float(response.headers["X-RateLimit-Remaining"]) <= 1:
+                time.sleep(float(response.headers["X-RateLimit-Reset-After"]))
 
 
 main()
