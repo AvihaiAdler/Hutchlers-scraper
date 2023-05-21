@@ -14,6 +14,6 @@ an example might look like: `python url_scraper.py https://discord.com/api/webho
 - make sure you have python 3.8 (or above) installed. this is important as otherwise the script can't guarantee chronological order of links
 - clone the repo
 - navigate to the project directory, open a terminal and run `python3 -m venv .venv`. this will create a virtual environment in the current directory (which may take a few seconds)
-- run `source .venv/bin/activate` to activate the virtual environment (`.venv\Scripts\activate.bat`). [`deactivate` in case you want to deactivate it]
+- run `source .venv/bin/activate` to activate the virtual environment (`.venv\Scripts\activate.bat` on windows). [`deactivate` in case you want to deactivate it]
 - within the virtual enviroment run `pip3 install -r requirements.txt`. this will install all the necessary modules to the virtual environment 
 - run `python url_scraper.py` with all the necessary arguments
