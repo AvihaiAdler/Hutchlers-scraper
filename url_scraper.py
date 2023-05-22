@@ -58,4 +58,5 @@ def main() -> None:
                 time.sleep(float(response.headers["X-RateLimit-Reset-After"]))
 
 
-main()
+if __name__ == "__main__":
+    main()
