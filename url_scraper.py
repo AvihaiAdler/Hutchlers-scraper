@@ -17,13 +17,17 @@ def extract_attacments_urls(html_doc: str, parser_type: str) -> set[str] | None:
     Returns:
         set[str] | None: a set containing all unique urls or None if there are non
     """
-    with open(html_doc, "r") as html:
-        soup_tree = BeautifulSoup(html, parser_type)
-        return set(
-            link.get("href")
-            for link in soup_tree.find_all("a")
-            if link.get("href")[0] != "#"
-        )
+    try:
+        with open(html_doc, "r") as html:
+            soup_tree = BeautifulSoup(html, parser_type)
+            return set(
+                link.get("href")
+                for link in soup_tree.find_all("a")
+                if link.get("href")[0] != "#"
+            )
+    except OSError as err:
+        print(f"the file '{html_doc}' couldn't be opened. reason: {err.strerror}")
+        return None
 
 
 def main() -> None:
