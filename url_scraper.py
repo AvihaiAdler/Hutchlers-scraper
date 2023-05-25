@@ -7,7 +7,7 @@ DELAY: float = 1
 TOO_MANY_REQUESTS: int = 429
 
 
-def extract_attacments_urls(html_doc: str, parser_type: str) -> set[str] | None:
+def extract_attacments_urls(html_doc: str, parser_type: str) -> dict[int, str] | None:
     """searches an html document for all links who aren't begin with a '#'
 
     Args:
@@ -20,11 +20,11 @@ def extract_attacments_urls(html_doc: str, parser_type: str) -> set[str] | None:
     try:
         with open(html_doc, "r") as html:
             soup_tree = BeautifulSoup(html, parser_type)
-            return set(
-                link.get("href")
-                for link in soup_tree.find_all("a")
+            return {
+                idx: link.get("href")
+                for idx, link in enumerate(soup_tree.find_all("a"))
                 if link.get("href")[0] != "#"
-            )
+            }
     except OSError as err:
         print(f"the file '{html_doc}' couldn't be opened. reason: {err.strerror}")
         return None
@@ -41,11 +41,11 @@ def main() -> None:
     post_url: str = sys.argv[1]
 
     for file_name in sys.argv[2:]:
-        urls: set[str] = extract_attacments_urls(file_name, "html.parser")
+        urls: dict[int, str] = extract_attacments_urls(file_name, "html.parser")
         if urls is None:
             continue
 
-        for url in urls:
+        for _, url in urls.items():
             response: requests.Response = requests.post(
                 post_url, json={"username": "scraper-webhook", "content": url}
             )
