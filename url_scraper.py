@@ -20,11 +20,11 @@ def extract_attacments_urls(html_doc: str, parser_type: str) -> dict[int, None] 
     try:
         with open(html_doc, "r") as html:
             soup_tree = BeautifulSoup(html, parser_type)
-            return {
-                link.get("href"): None
+            return dict.fromkeys(
+                link.get("href")
                 for link in soup_tree.find_all("a")
                 if link.get("href")[0] != "#"
-            }
+            )
     except OSError as err:
         print(f"the file '{html_doc}' couldn't be opened. reason: {err.strerror}")
         return None
@@ -41,7 +41,8 @@ def main() -> None:
     post_url: str = sys.argv[1]
 
     for file_name in sys.argv[2:]:
-        urls: dict[int, str] = extract_attacments_urls(file_name, "html.parser")
+        # urls: dict[int, str] = extract_attacments_urls(file_name, "html.parser")
+        urls: dict[str, None] = extract_attacments_urls(file_name, "html.parser")
         if urls is None:
             continue
 
